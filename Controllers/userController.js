@@ -1,9 +1,10 @@
 import { user } from '../Models/userModal.js'
 import { Response } from '../Responses/userResponses.js'
 export const userController = {
+
     login: (req, res) => {
         try {
-
+            console.log("req.body=======>\n", req.body);
             const { email, password } = req.body;
             if (email, password) {
                 user.findOne({ email }, (error, result) => {
