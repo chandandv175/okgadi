@@ -1,9 +1,10 @@
 import { user } from '../Models/userModal.js'
 import { Response } from '../Responses/userResponses.js'
 export const userController = {
+
     login: (req, res) => {
         try {
-
+            console.log("req.body=======>\n", req.body);
             const { email, password } = req.body;
             if (email, password) {
                 user.findOne({ email }, (error, result) => {
@@ -16,6 +17,9 @@ export const userController = {
                         res.status(200).json(Response.loginSuccess(res, data))
                     }
                 })
+            }
+            else{
+                res.status(422).json(Response.invalidParams(res))
             }
 
         } catch (ex) {
@@ -38,6 +42,9 @@ export const userController = {
                         res.status(200).json(Response.loginSuccess(res, data))
                     }
                 })
+            }
+            else{
+                res.status(422).json(Response.invalidParams(res))
             }
 
         } catch (ex) {

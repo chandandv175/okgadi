@@ -1,7 +1,7 @@
 export const Response = {
 
     serverError: (res) => {
-        res.send({
+       return res.send({
             status: 500,
             message: 'Internal server error.'
         })
@@ -59,7 +59,6 @@ export const Response = {
             userData
         })
     },
-
     // signup
     signSuccess: (res) => {
         res.send({
