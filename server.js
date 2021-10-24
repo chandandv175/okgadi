@@ -3,6 +3,9 @@ import { connectdb } from './dbConnection/index.js';
 import { port } from './utils/constant.js';
 import { Router } from './Routers/userRouter.js';
 import { configuration } from './config/config.js';
+import {serve, setup} from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
+
 // const swaggerUi = require('swagger-ui-express');
 // const swaggerJSDoc = require('swagger-jsdoc');
 connectdb();
@@ -42,26 +45,26 @@ app.listen(port, async () => {
   }
 });
 //* *****************************************swgger setup********************************* */
-// const swaggerDefinition = {
-//     info: {
-//       title: 'okGadi',
-//       version: '1.0.0',
-//       description: 'Swagger API Docs'
-//     },
-//     // host:`${global.gConfig.swaggerURL}`, // Host (optional)
-//     //  host:`localhost:7000`, // Host (optional)
-//     basePath: '/' // Base path (optional)
-//   };
+const swaggerDefinition = {
+    info: {
+      title: 'okGadi',
+      version: '1.0.0',
+      description: 'Swagger API Docs'
+    },
+    // host:`${global.gConfig.swaggerURL}`, // Host (optional)
+    //  host:`localhost:7000`, // Host (optional)
+    basePath: '/' // Base path (optional)
+  };
 
-//   const options = {
-//     swaggerDefinition,
-//     apis: ['./Routers/*.js'] // <-- not in the definition, but in the options
-//   };
+  const options = {
+    swaggerDefinition,
+    apis: ['./Routers/*.js'] // <-- not in the definition, but in the options
+  };
 
-//   const swaggerSpec = swaggerJSDoc(options);
+  const swaggerSpec = swaggerJSDoc(options);
 
-//   app.get('/swagger.json', (req, res) => {
-//     res.setHeader('Content-Type', 'application/json');
-//     res.send(swaggerSpec);
-//   });
-//   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.get('/swagger.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+  });
+  app.use('/api', serve, setup(swaggerSpec));

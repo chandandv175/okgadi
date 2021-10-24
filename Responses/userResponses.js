@@ -1,94 +1,105 @@
+import * as responseCodes from "./responseStatus.js"
+
 export const Response = {
 
+
+    mandaroryFeilds: (fields) => {
+        return {
+            status: responseCodes.INVALID,
+            message: 'Mandatory fields.',
+            fields
+        }
+    },
     serverError: (res) => {
-       return res.send({
-            status: 500,
+        return {
+            status: responseCodes.SERVER_ERROR,
             message: 'Internal server error.'
-        })
+        }
     },
     invalidParams: (res) => {
-        res.send({
-            status: 422,
+        return {
+            status: responseCodes.INVALID_PARAMETER,
             message: 'Invalid parameters.'
-        })
+        }
     },
     invalidData: (res) => {
-        res.status(400).json({
-            status: 400,
+        return {
+            status: responseCodes.INVALID,
             message: 'Invalid data.'
-        })
+        }
     },
     auth: (res) => {
-        res.send({
-            status: 401,
+        return {
+            status: responseCodes.UNAUTHOTIZED,
             message: 'Unauthorized.'
-        })
+        }
     },
     forbidden: (res) => {
-        res.send({
-            status: 403,
+        return {
+            status: responseCodes.FORBIDDEN,
             message: 'Forbidden.'
-        })
+        }
     },
     // login
     loginSuccess: (res, userData) => {
-        res.send({
-            status: 200,
+        return {
+            status: responseCodes.SUCCESS,
             message: 'Login successfully.',
             userData
-        })
+        }
     },
     invalidCredentials: (res) => {
-        res.send({
-            status: 400,
+        return {
+            status: responseCodes.INVALID,
             message: 'Invalid Credentials.'
-        })
+        }
     },
 
     invalidData: (res) => {
-        res.send({
-            status: 400,
+        return {
+            status: responseCodes.NO_RECORD,
             message: 'No record found.'
-        })
+        }
     },
 
     getUserData: (res, userData) => {
-        res.send({
-            status: 200,
+        return {
+            status: responseCodes.SUCCESS,
             message: 'Data found successfully.',
             userData
-        })
+        }
     },
     // signup
-    signSuccess: (res) => {
-        res.send({
+    signSuccess: (userData) => {
+        return {
             status: 200,
-            message: 'Signup successfully. Please verify your email id'
-        })
+            message: 'Signup successfully. Please verify your email id',
+            userData
+        }
     },
     sameEmailError: (res) => {
-        res.send({
+        return {
             status: 400,
             message: 'User with same email id already exist.'
-        })
+        }
     },
     verifyEmailError: (res) => {
-        res.send({
+        return {
             status: 400,
             message: 'Please verify your email first.'
-        })
+        }
     },
     codeVerified: (res) => {
-        res.send({
+        return {
             status: 200,
             message: 'Verification code is successfully verified.'
-        })
+        }
     },
     invalidCode: (res) => {
 
-        res.send({
+        return {
             status: 400,
             message: 'Invalid verification code.'
-        })
+        }
     }
 }

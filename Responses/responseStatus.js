@@ -1,0 +1,21 @@
+//
+const SUCCESS = 200;
+//
+const SERVER_ERROR = 500;
+//
+const INVALID_PARAMETER = 422;
+const INVALID = 400;
+const UNAUTHOTIZED = 401;
+const FORBIDDEN = 403;
+const NO_RECORD = 404;
+
+
+export {
+    SERVER_ERROR,
+    INVALID_PARAMETER,
+    INVALID,
+    UNAUTHOTIZED,
+    FORBIDDEN,
+    SUCCESS,
+    NO_RECORD
+}
