@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import { userController } from '../Controllers/userController.js'
+import * as middleware from '../Middlewares/authHandler.js'
 
 const router = Router();
 /**
@@ -76,6 +77,28 @@ router.post('/login', userController.login);
  * 
  */
 router.post('/signup', userController.signup);
+/**
+ * @swagger
+ * /user/v1/getUserProfile:
+ *   get:
+ *     tags:
+ *       - Mobile API :- USER MANAGEMENT
+ *     description: Creating Docs for user profile with JWT token
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200: 
+ *         description: Otp verify successfully.
+ *       500:
+ *         description: Internal server error.
+ *       501:
+ *         description: Something went wrong.
+ *       404:
+ *          description: User Not found
+ */
+
+router.get('/getUserProfile', middleware.verifyToken,userController.getUserProfile);
+
 
 export { router as Router };
 

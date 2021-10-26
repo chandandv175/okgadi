@@ -47,7 +47,7 @@ app.listen(port, async () => {
 //* *****************************************swgger setup********************************* */
 const swaggerDefinition = {
     info: {
-      title: 'okGadi',
+      title: ' OK Gadi',
       version: '1.0.0',
       description: 'Swagger API Docs'
     },

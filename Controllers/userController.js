@@ -51,7 +51,9 @@ export const userController = {
         }
     },
     login: (req, res) => {
-        let query = { $and: [{ email: req.body.email }, { userStatus: "active" }] }
+        let query = { $and: [{ email: req.body.email }, { userStatus: "active" }] };
+
+        console.log('login request:',req.headers,req.body)
         try {
             const [valid, fields] = checkMandatory(['email', 'password'], req.body);
 
@@ -62,7 +64,7 @@ export const userController = {
                 else if (!!result) {
                     console.log('CHECK::',req.body.password,result.password)
 
-                    bcrypt.compare(req.body.password,result.password).then((err, check) => {
+                    bcrypt.compare(req.body.password,result.password).then((check, err) => {
                         console.log('CHECK::',err,check)
 
                         if (err) return res.status(500).json(Response.serverError(res));
@@ -86,7 +88,7 @@ export const userController = {
 
                     })
                 }
-                else res.status(404).json(Response.invalidData)
+                else res.status(404).json(Response.invalidData())
             })
 
 
@@ -95,5 +97,28 @@ export const userController = {
             return res.status(500).json(Response.serverError(res))
         }
     },
+
+    getUserProfile : (req,res) =>{
+
+        try {
+         
+            User.findOne('query', (error, result) => {
+                if (error) return res.status(500).json(Response.serverError(res))
+                else if (!!result) {
+                            let userData = {
+                                _id: result._id,
+                            }
+                            return res.status(200).json(Response.getUserData(userData))
+                }
+                else res.status(404).json(Response.invalidData())
+            })
+
+
+        } catch (ex) {
+            console.log(ex)
+            return res.status(500).json(Response.serverError(res))
+        }
+
+    }
 
 }

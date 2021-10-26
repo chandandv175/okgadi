@@ -28,10 +28,16 @@ export const Response = {
             message: 'Invalid data.'
         }
     },
-    auth: (res) => {
+    unauthrized: (res) => {
         return {
             status: responseCodes.UNAUTHOTIZED,
             message: 'Unauthorized.'
+        }
+    },
+    notFound: (res) => {
+        return {
+            status: responseCodes.UNAUTHOTIZED,
+            message: 'Details not found.'
         }
     },
     forbidden: (res) => {
@@ -41,7 +47,7 @@ export const Response = {
         }
     },
     // login
-    loginSuccess: (res, userData) => {
+    loginSuccess: (userData) => {
         return {
             status: responseCodes.SUCCESS,
             message: 'Login successfully.',
@@ -57,7 +63,7 @@ export const Response = {
 
     invalidData: (res) => {
         return {
-            status: responseCodes.NO_RECORD,
+            status: responseCodes.NO_FOUND,
             message: 'No record found.'
         }
     },
