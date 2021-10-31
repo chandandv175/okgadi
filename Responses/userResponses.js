@@ -10,7 +10,7 @@ export const Response = {
             fields
         }
     },
-    serverError: (res) => {
+    serverError: () => {
         return {
             status: responseCodes.SERVER_ERROR,
             message: 'Internal server error.'
@@ -36,7 +36,7 @@ export const Response = {
     },
     notFound: (res) => {
         return {
-            status: responseCodes.UNAUTHOTIZED,
+            status: responseCodes.NOT_FOUND,
             message: 'Details not found.'
         }
     },
@@ -68,7 +68,7 @@ export const Response = {
         }
     },
 
-    getUserData: (res, userData) => {
+    getUserData: (userData) => {
         return {
             status: responseCodes.SUCCESS,
             message: 'Data found successfully.',
@@ -78,34 +78,41 @@ export const Response = {
     // signup
     signSuccess: (userData) => {
         return {
-            status: 200,
+            status: responseCodes.SUCCESS,
             message: 'Signup successfully. Please verify your email id',
             userData
         }
     },
     sameEmailError: (res) => {
         return {
-            status: 400,
+            status: responseCodes.INVALID,
             message: 'User with same email id already exist.'
         }
     },
     verifyEmailError: (res) => {
         return {
-            status: 400,
+            status: responseCodes.INVALID,
             message: 'Please verify your email first.'
         }
     },
     codeVerified: (res) => {
         return {
-            status: 200,
+            status: responseCodes.SUCCESS,
             message: 'Verification code is successfully verified.'
         }
     },
     invalidCode: (res) => {
 
         return {
-            status: 400,
+            status: responseCodes.INVALID,
             message: 'Invalid verification code.'
+        }
+    },
+    codeAlreadyVerified: (res) => {
+
+        return {
+            status: responseCodes.INVALID,
+            message: 'Verification process already done.'
         }
     }
 }

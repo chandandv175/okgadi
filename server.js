@@ -1,17 +1,21 @@
 import express from 'express'
 import { connectdb } from './dbConnection/index.js';
 import { port } from './utils/constant.js';
-import { Router } from './Routers/userRouter.js';
-import { configuration } from './config/config.js';
-import {serve, setup} from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
+import { userRouter } from './Routers/userRouter.js';
+import { adminRouter } from './Routers/adminRouter.js';
 
-// const swaggerUi = require('swagger-ui-express');
-// const swaggerJSDoc = require('swagger-jsdoc');
+import { configuration } from './config/config.js';
+import { serve, setup } from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
+import cors from 'cors';
+import morgan from 'morgan';
+
 connectdb();
 const app = express();
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+app.use(cors());
+app.use(morgan('tiny'));
 
 //********************Error Exception handelling ***********/
 app.use((error, req, res, next) => {
@@ -38,7 +42,9 @@ app.listen(port, async () => {
   try {
     global.gConfig = await configuration.configurationSetting();
     console.log("global keys====>\n", global.gConfig);
-    app.use('/user/v1', Router);
+    app.use('/user/v1', userRouter);
+    app.use('/admin/v1', adminRouter);
+
     console.log('Server starts at ', port)
   } catch (error) {
     console.log(`Server is not responding.${error}`);
@@ -46,25 +52,37 @@ app.listen(port, async () => {
 });
 //* *****************************************swgger setup********************************* */
 const swaggerDefinition = {
-    info: {
-      title: ' OK Gadi',
-      version: '1.0.0',
-      description: 'Swagger API Docs'
-    },
-    // host:`${global.gConfig.swaggerURL}`, // Host (optional)
-    //  host:`localhost:7000`, // Host (optional)
-    basePath: '/' // Base path (optional)
-  };
 
-  const options = {
-    swaggerDefinition,
-    apis: ['./Routers/*.js'] // <-- not in the definition, but in the options
-  };
+  info: {
+    title: ' OK Gadi',
+    version: '1.0.0',
+    description: 'Swagger API Docs',
+  },
+  // host:`${global.gConfig.swaggerURL}`, // Host (optional)
+  //  host:`localhost:7000`, // Host (optional)
+  basePath: '/',// Base path (optional),
 
-  const swaggerSpec = swaggerJSDoc(options);
+  securityDefinitions: {
+    auth: {
+      type: 'apiKey',
+      name: 'authrization'
+    }
+  },
+  security: [
+    { auth: [] }
+  ]
 
-  app.get('/swagger.json', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(swaggerSpec);
-  });
-  app.use('/api', serve, setup(swaggerSpec));
+};
+
+const options = {
+  swaggerDefinition,
+  apis: ['./Routers/*.js'] // <-- not in the definition, but in the options
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+app.get('/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+app.use('/api', serve, setup(swaggerSpec));

@@ -5,7 +5,7 @@ import { Response } from '../Responses/userResponses.js'
 import { checkMandatory } from '../utils/commonFunctions.js';
 import * as responseCodes from "../Responses/responseStatus.js"
 
-export const userController = {
+export const adminController = {
 
     signup: (req, res) => {
         try {
@@ -64,9 +64,9 @@ export const userController = {
                 if (error) return res.status(responseCodes.SERVER_ERROR).json(Response.serverError(res))
                 else if (!!result) {
 
-                    if(!result.userStatus) return res.status(responseCodes.INVALID).json({
-                        status : responseCodes.INVALID,
-                        message : 'Please verify your email first.'
+                    if (!result.userStatus) return res.status(responseCodes.INVALID).json({
+                        status: responseCodes.INVALID,
+                        message: 'Please verify your email first.'
                     })
                     console.log('CHECK::', req.body.password, result.password)
 
@@ -106,6 +106,69 @@ export const userController = {
                 return res.status(responseCodes.SUCCESS).json(Response.getUserData(userData))
             }
             else return res.status(responseCodes.NOT_FOUND).json(Response.invalidData())
+        } catch (ex) {
+            console.log(ex)
+            return res.status(responseCodes.SERVER_ERROR).json(Response.serverError(res))
+        }
+    },
+
+    getUserList: (req, res) => {
+        try {
+            const { search = '', status = "active", page = 1, limit = 10 , userId  = '' } = req.query;
+            let query = {
+                $or: [{ userName: { $regex: search, $options: "i" } }, { email: { $regex: search, $options: "i" } }],
+                userStatus: status, userRole: { $ne: "admin" }
+            };
+
+            if(userId) {
+                query._id  = userId;
+            }
+
+            let options = { page : Number(page), limit : Number(limit), sort: { createdAt: -1 }, select: { password: 0,verificationCode :0,__v : 0 } }; //remove password key from list
+            User.paginate(query, options, (error, result) => {
+                // console.log('errro', error, result)
+                if (error) return res.status(responseCodes.SERVER_ERROR).json(Response.serverError(res));
+                else if(!result?.docs?.length){
+                    return res.status(responseCodes.NOT_FOUND).json({
+                        status: responseCodes.NOT_FOUND,
+                        userList: [],
+                        "total": result.total,
+                        "limit": result.limit,
+                        "page": result.page,
+                        "pages": result.pages
+
+                    })
+                }
+                else {
+                    return res.status(responseCodes.SUCCESS).json({
+                        status: responseCodes.SUCCESS,
+                        userList: result.docs,
+                        "total": result.total,
+                        "limit": result.limit,
+                        "page": result.page,
+                        "pages": result.pages
+                    })
+                }
+            })
+        } catch (ex) {
+            console.log(ex)
+            return res.status(responseCodes.SERVER_ERROR).json(Response.serverError(res))
+        }
+    },
+
+    changeUserStatus: (req, res) => {
+        try {
+            User.findByIdAndUpdate({ _id: req.body.id }, { userStatus: req.body.userStatus }, { new: true }, (error, result) => {
+                if (error) return res.status(responseCodes.SERVER_ERROR).json(Response.serverError(res));
+                else {
+                    return res.status(responseCodes.SUCCESS).json({
+                        status: responseCodes.SUCCESS,
+                        message: 'Status changed successfully.'
+                    });
+                }
+
+            })
+
         } catch (ex) {
             console.log(ex)
             return res.status(responseCodes.SERVER_ERROR).json(Response.serverError(res))
@@ -153,11 +216,12 @@ export const userController = {
 
             User.findOneAndUpdate(query, { verificationCode: Math.floor(1000 + Math.random() * 9000) }, { new: true }, (error1, result1) => {
                 if (error1) return res.status(responseCodes.SERVER_ERROR).json(Response.serverError());
-                else if(!!result1) {
+                else if (!!result1) {
                     return res.status(responseCodes.SUCCESS).json({
-                    status: responseCodes.SUCCESS,
-                    message: 'Verification code sended to your email.'
-                });}
+                        status: responseCodes.SUCCESS,
+                        message: 'Verification code sended to your email.'
+                    });
+                }
                 else {
                     return res.status(responseCodes.NOT_FOUND).json(Response.notFound())
                 }

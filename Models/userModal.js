@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate'
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -56,6 +57,8 @@ const userSchema = new Schema({
     }
 
 }, { timestamps: true });
+
+userSchema.plugin(mongoosePaginate);
 
 userSchema.index({ location: "2dsphere" });
 // user data save as =>
